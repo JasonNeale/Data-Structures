@@ -1,14 +1,6 @@
-"""
-Binary search trees are a data structure that enforce an ordering over 
-the data they store. That ordering in turn makes it a lot more efficient 
-at searching for a particular piece of data in the tree. 
+from queue import Queue
+from stack import Stack
 
-This part of the project comprises two days:
-1. Implement the methods `insert`, `contains`, `get_max`, and `for_each`
-   on the BSTNode class.
-2. Implement the `in_order_print`, `bft_print`, and `dft_print` methods
-   on the BSTNode class.
-"""
 class BSTNode:
     def __init__(self, value):
         self.value = value
@@ -17,37 +9,127 @@ class BSTNode:
 
     # Insert the given value into the tree
     def insert(self, value):
-        pass
+        # check if the new nodes value is less than the current nodes value    
+        if value < self.value:
+            # if there is no left child already here
+            if not self.left:
+                # add the new node to the left
+                # create a BSTNode and encapsulate the value in it then set it to the left
+                self.left = BSTNode(value)
+            else:
+                # otherwise call insert on the left node
+                return self.left.insert(value)
+        # otherwise (the new nodes value is greaterthan or equal to the current node value)
+        if value >= self.value:
+            # if there is no right child already here
+            if not self.right:
+                # add the new node to the right
+                # create a BSTNode and encapsulate the value in it then set it to the right
+                self.right = BSTNode(value)
+            else:
+                # otherwise call insert on the right node
+                return self.right.insert(value)
 
     # Return True if the tree contains the value
     # False if it does not
     def contains(self, target):
-        pass
+        # if the value of the current node matches the target
+        if target == self.value:
+            # return True
+            return True
+        # check if the target is less than the current nodes value
+        elif target < self.value:
+            # if there is no left child already here
+            if not self.left:
+                # return False
+                return False
+            else:
+                # return a call of contains on the left child passing in the target value
+                return self.left.contains(target)
+        # otherwise (the target is greater than the current nodes value)
+        elif target > self.value:
+            # if there is no right child already here
+            if not self.right:
+                # return False
+                return False
+            else:
+                # return a call of contains on the right child passing in the target value
+                return self.right.contains(target)
 
     # Return the maximum value found in the tree
     def get_max(self):
-        pass
+        # check for an empty tree
+        if self.right is None and self.left is None:
+            # return None
+            return None
+        
+        # check if there is no node to the right
+        if not self.right:
+            # return the nodes value
+            return self.value
+        else:
+            # return a call to get max on the right child
+            return self.right.get_max()
 
-    # Call the function `fn` on the value of each node
     def for_each(self, fn):
-        pass
+        # call the function passing in the current nodes value
+        fn(self.value)
+        
+        # if there is a node to the left
+        if self.left:
+             # call the function on the left value
+            self.left.for_each(fn)
+        # if there is a node to the right
+        if self.right:
+            # call the function on the right node
+            self.right.for_each(fn)
 
     # Part 2 -----------------------
 
     # Print all the values in order from low to high
     # Hint:  Use a recursive, depth first traversal
     def in_order_print(self):
-        pass
+        if self.left:
+            self.left.in_order_print()
+
+        print(self.value)
+
+        if self.right:
+            self.right.in_order_print()
 
     # Print the value of every node, starting with the given node,
     # in an iterative breadth first traversal
-    def bft_print(self):
-        pass
+    def bft_print(self, node):
+            q = Queue()
+            q.enqueue(node)
+            
+            while q.len():
+                popped = q.dequeue()
+                
+                print(popped.value)
+
+                if popped.left:
+                    q.enqueue(popped.left)
+
+                if popped.right:
+                    q.enqueue(popped.right)
 
     # Print the value of every node, starting with the given node,
     # in an iterative depth first traversal
     def dft_print(self):
-        pass
+        current_node = self
+        stack = [current_node]
+
+        while stack:
+            current_node = stack.pop()
+            
+            print(current_node.value)
+            
+            if current_node.left:
+                stack.append(current_node.left)
+            
+            if current_node.right:
+                stack.append(current_node.right)
 
     # Stretch Goals -------------------------
     # Note: Research may be required
@@ -60,9 +142,6 @@ class BSTNode:
     def post_order_dft(self):
         pass
 
-"""
-This code is necessary for testing the `print` methods
-"""
 bst = BSTNode(1)
 
 bst.insert(8)
@@ -73,13 +152,16 @@ bst.insert(3)
 bst.insert(4)
 bst.insert(2)
 
-bst.bft_print()
+bst.bft_print(bst)
 bst.dft_print()
 
 print("elegant methods")
 print("pre order")
+
 bst.pre_order_dft()
+
 print("in order")
-bst.in_order_dft()
+# bst.in_order_dft()
 print("post order")
-bst.post_order_dft()  
+
+bst.post_order_dft() 
